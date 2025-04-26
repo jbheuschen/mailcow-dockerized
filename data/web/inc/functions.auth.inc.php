@@ -515,8 +515,20 @@ function keycloak_mbox_login_rest($user, $pass, $extra = null){
     return false;
   }
 
-  // validate mailcow_password
+  // Get hashed mailcow password
   $mailcow_password = $user_res['attributes']['mailcow_password'][0];
+
+  // If the hash does not start with a hash algorithm specifier (e.g. "{SHA}")
+  // try to base64 decode it. Should decoding fail, do nothing.
+  // This solves issues with base64-encoded hashes from LDAP-backends
+  if (!str_starts_with($mailcow_password, '{')) {
+    $decoded = base64_decode($pw, true);
+    if ($decoded) {
+      $mailcow_password = $decoded;
+    }
+  }
+
+  // validate mailcow_password
   if (!verify_hash($mailcow_password, $pass)) {
     return false;
   }
