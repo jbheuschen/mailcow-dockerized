@@ -522,7 +522,7 @@ function keycloak_mbox_login_rest($user, $pass, $extra = null){
   // try to base64 decode it. Should decoding fail, do nothing.
   // This solves issues with base64-encoded hashes from LDAP-backends
   if (!str_starts_with($mailcow_password, '{')) {
-    $decoded = base64_decode($pw, true);
+    $decoded = base64_decode($mailcow_password, true);
     if ($decoded) {
       $mailcow_password = $decoded;
     }
